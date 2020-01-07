@@ -1,5 +1,5 @@
 # Description:
-Super tough sql injection challenge. We have a form validating user id's and source code is given.
+Super tough & Great SQL Injection Challenge which i personally loved it as i learned a ton through this challenge. We have a form validating user id's and source code is given.
 
 ```css
 <?php 
