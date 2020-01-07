@@ -170,7 +170,7 @@ Security Check!!! Please enter your ID to prove who are you !!!:
 Hello guest
 ```
 
-same way we can find other table name lengths. I only found 2 tables of which ``5 & 25`` length.
+same way we can find other table name lengths. I only found 2 tables of which ``5 & 25`` lengths. We can easily guess first table name as ``users`` which is of `5` char length.
 
 ```css
 def dump_tablenames():
