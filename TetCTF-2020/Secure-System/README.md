@@ -85,8 +85,12 @@ Hello
 root@MrR3boot:~# curl -X POST http://45.77.240.178:8002/index.php -d "id=2 %26%26 length(database())=10" 2>/dev/null | tail -1 
 Hello guest
 ```
-So quickly i was able to find the length of database which is ``10``. Then i started making a script to bruteforce char by char using ``substr`` function in mysql. Payload is as 
-``2 && ascii(substr(database(),{},10))=ascii("{}")`` (To check lower and upper case i've used ascii())
+So quickly i was able to find the length of database which is ``10``. Then i started making a script to bruteforce char by char using ``substr`` function in mysql. 
+
+Another hurdge here is MySQL is case insensitive language and like operator also didn't check the casing. So if we don't identify table/database name properly including lower/upper case we can't pitch further into the challenge. One way we could check that is using ``BINARY`` but as its having ``IN`` we can't use it. other way is to use ``COLLATION`` again those have ``IN`` ex: latin we can't use them as well. I ended up eating lot of time searching for ways and useful functions in MySQL. Finally i could use ascii on both sides to convert them to decimal and then check properly.
+
+Payload is as 
+``2 && ascii(substr(database(),{},10))=ascii("{}")`` 
 
 ```css
 import requests
