@@ -225,7 +225,7 @@ root@MrR3boot:~# python do.py
 Then i started looking for a way to dump the columns but i didn't find any way from mysql documentation. After some hours reading through bunch of docs i could see used queries are stored in sys.statement_analysis table from https://dev.mysql.com/doc/refman/8.0/en/sys-statement-analysis.html
 But as we know how CTF stuff is 1000's of queries been sent to server and we can't blindly go for bruteforce on them. Then i stopped here knowing table name and couldn't progress further. After poking challenge author, he mentioned about PHP and Regex issue. Then after an hour or so i figured out https://bugs.php.net/bug.php?id=70699
 
-If we cross the php pcre backtrace limit (100000) we can defeat the preg_match step. I did same.
+If we cross the php pcre backtrace limit (1000000) we can defeat the preg_match step. I did same.
 
 ```css
 root@MrR3boot:~# php -a
