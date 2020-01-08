@@ -208,7 +208,7 @@ root@MrR3boot:~# python do.py
 [+] Table Name : Th1z_Fack1
 [+] Table Name : Th1z_Fack1n
 [+] Table Name : Th1z_Fack1n_
-[+] Table Nmae : Th1z_Fack1n_F
+[+] Table Name : Th1z_Fack1n_F
 [+] Table Name : Th1z_Fack1n_Fl
 [+] Table Name : Th1z_Fack1n_Fl4
 [+] Table Name : Th1z_Fack1n_Fl44
