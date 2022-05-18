@@ -1,0 +1,718 @@
+
+
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+
+ <title>Status Check | Bank of Spain</title>
+  <link href='//fonts.googleapis.com/css?family=Open+Sans:400,600,700,300|Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+<meta content='width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1' name='viewport' />
+  
+  
+  
+<style>
+html,body,body div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,figure,footer,header,hgroup,menu,nav,section,time,mark,audio,video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-size: 100%;
+  letter-spacing: 0;
+  vertical-align: baseline;
+  background: transparent;
+  font-weight: inherit;
+}
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+article,aside,figure,footer,header,hgroup,nav,section {
+  display: block;
+}
+object,embed {
+  max-width: 100%;
+}
+ul {
+  list-style: none;
+}
+blockquote,q {
+  quotes: none;
+}
+b,strong {
+  font-weight: bold;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none;
+}
+a {
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+}
+del {
+  text-decoration: line-through;
+}
+abbr[title],
+dfn[title] {
+  border-bottom: 1px dotted #000;
+  cursor: help;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+mark {
+  color: inherit;
+}
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 1em 0;
+  padding: 0;
+}
+input,
+select {
+  vertical-align: middle;
+}
+pre {
+  white-space: pre;
+  white-space: pre-wrap;
+  white-space: pre-line;
+  word-wrap: break-word;
+}
+input[type="radio"] {
+  vertical-align: text-bottom;
+}
+input[type="checkbox"] {
+  vertical-align: bottom;
+  *vertical-align: baseline;
+}
+.ie6 input {
+  vertical-align: text-bottom;
+}
+select,
+input,
+textarea {
+  font: 99% sans-serif;
+}
+table {
+  font-size: inherit;
+  font: 100%;
+}
+a:hover,
+a:active {
+  outline: none;
+}
+small {
+  font-size: 85%;
+}
+strong,
+th {
+  font-weight: bold;
+}
+td,
+td img {
+  vertical-align: top;
+}
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+}
+sup {
+  top: -0.5em;
+}
+sub {
+  bottom: -0.25em;
+}
+pre,
+code,
+kbd,
+samp {
+  font-family: monospace, sans-serif;
+}
+.ie7 img {
+  -ms-interpolation-mode: bicubic;
+}
+.ie6 html {
+  filter: expression(document.execCommand("BackgroundImageCache", false, true));
+}
+select,
+input,
+textarea,
+a {
+  outline: none;
+}
+a {
+  color: inherit;
+}
+.ongoingIssues {
+  margin-bottom: 15px;
+}
+.issueBanner {
+  background: #333;
+  display: block;
+  border-radius: 6px;
+  text-decoration: none;
+  padding: 13px 17px;
+  color: #fff;
+  margin-bottom: 15px;
+}
+.issueBanner:last-child {
+  margin-bottom: 0;
+}
+.issueBanner--investigating {
+  background: #d13943;
+}
+.issueBanner--identified {
+  background: #d13980;
+}
+.issueBanner--monitoring {
+  background: #399dd1;
+}
+.issueBanner--maintenance {
+  background: #fff7d6;
+  color: #77745e;
+}
+.issueBanner__state {
+  float: right;
+  font-weight: 600;
+  font-size: 12px;
+  margin-left: 15px;
+}
+.issueBanner__time {
+  font-size: 12px;
+  opacity: 0.7;
+}
+.issueDetail {
+  overflow: hidden;
+}
+.issueDetail__title {
+  font-size: 35px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 38px;
+  margin-bottom: 7px;
+}
+.issueDetail__date {
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 30px;
+}
+.issueDetail__descriptionTitle {
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+.issueDetail__description {
+  line-height: 24px;
+  margin-bottom: 25px;
+}
+.issueDetail__details {
+  line-height: 24px;
+  margin-bottom: 40px;
+}
+.issueDetail__details dt {
+  font-weight: 700;
+  margin-bottom: 15px;
+  float: left;
+  width: 40%;
+}
+.issueDetail__details dd {
+  margin-bottom: 15px;
+}
+.issueDetail__details dd:last-child {
+  margin-bottom: 0;
+}
+.issueDetail__services {
+  background: #fff7d6;
+  width: 220px;
+  float: right;
+  font-size: 13px;
+  padding: 15px 20px;
+  border-radius: 4px;
+  margin-left: 25px;
+}
+.issueDetail__services p {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.issueDetail__services li {
+  list-style: square;
+  margin-left: 16px;
+}
+@media (max-width: 750px) {
+  .issueDetail__services {
+    float: none;
+    width: 100%;
+    margin-left: 0;
+    margin-bottom: 25px;
+  }
+}
+@media (max-width: 600px) {
+  .issueDetail__details dt {
+    float: none;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+@media (max-width: 470px) {
+  .issueDetail__title {
+    font-size: 25px;
+    line-height: 30px;
+  }
+}
+.issueUpdates {
+  line-height: 1.5;
+}
+.issueUpdates__header {
+  font-weight: 700;
+  margin-bottom: 25px;
+  font-size: 22px;
+}
+.issueUpdates__update {
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px dashed #ddd;
+}
+.issueUpdates__update:last-child {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.issueUpdates__text {
+  margin-bottom: 5px;
+}
+.issueUpdates__meta {
+  font-size: 12px;
+  color: #888;
+}
+.issueUpdate__state--investigating {
+  color: #d13943;
+}
+.issueUpdate__state--identified {
+  color: #d13980;
+}
+.issueUpdate__state--monitoring {
+  color: #399dd1;
+}
+.issueUpdate__state--resolved {
+  color: #6cbe07;
+}
+.button {
+  border-radius: 4px;
+  padding: 10px 20px;
+  background: #fff;
+  text-decoration: none;
+  border: 1px solid #ddd;
+  color: #888;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+.pushButton {
+  background: #efefef;
+  font-size: 12px;
+  color: #777;
+  text-shadow: 1px 1px 2px #fff;
+  padding: 6px 15px;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  font-weight: 600;
+  outline: none;
+  box-shadow: inset 0 0 1px #fff;
+  background: #fcfcfc;
+  background: -moz-linear-gradient(top, #fcfcfc 0%, #efefef 100%);
+  background: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0%, #fcfcfc),
+    color-stop(100%, #efefef)
+  );
+  background: -webkit-linear-gradient(top, #fcfcfc 0%, #efefef 100%);
+  background: -o-linear-gradient(top, #fcfcfc 0%, #efefef 100%);
+  background: -ms-linear-gradient(top, #fcfcfc 0%, #efefef 100%);
+  background: linear-gradient(to bottom, #fcfcfc 0%, #efefef 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(
+      startColorstr="#fcfcfc",
+      endColorstr="#efefef",
+      GradientType=0
+    );
+}
+.pushButton:active {
+  background: #efefef;
+}
+.maintenanceStatusTag {
+  color: #aaa;
+}
+.maintenanceStatusTag.maintenanceStatusTag--active {
+  color: #6cbe07;
+}
+.maintenanceStatusTag.maintenanceStatusTag--upcoming {
+  color: #068fd6;
+}
+.pagination {
+  text-align: center;
+  margin-top: 45px;
+  font-size: 12px;
+}
+.pagination a,
+.pagination span.page.current {
+  background: #f9f9f9;
+  border: 1px solid #ccc;
+  padding: 2px 9px;
+  margin: 0 2px;
+  display: inline-block;
+  text-decoration: none;
+}
+.pagination span.page.current {
+  font-weight: bold;
+  background: #ccc;
+  color: #fff;
+}
+.staytusDemo {
+  margin-top: 30px;
+  background: #f3ffe1;
+  padding: 15px;
+  border-radius: 6px;
+  border: 2px solid #cfdbbd;
+  font-size: 14px;
+  text-align: center;
+  line-height: 24px;
+}
+.staytusDemo b {
+  color: #719904;
+}
+.staytusDemo a {
+  font-weight: 700;
+}
+.inputWithSubmit {
+  overflow: hidden;
+}
+.inputWithSubmit__input {
+  width: 80%;
+  float: left;
+}
+.inputWithSubmit__input input {
+  width: 100%;
+}
+.inputWithSubmit__submit {
+  float: right;
+  width: 18%;
+}
+.inputWithSubmit__submit button,
+.inputWithSubmit__submit input {
+  width: 100%;
+}
+@media (max-width: 560px) {
+  .inputWithSubmit__input {
+    width: 68%;
+  }
+  .inputWithSubmit__submit {
+    width: 30%;
+  }
+}
+.pageHeader {
+  padding: 40px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #efefef;
+  margin-bottom: 50px;
+}
+.pageHeader__title {
+  float: right;
+  color: #999;
+}
+@media (max-width: 470px) {
+  .pageHeader {
+    margin-bottom: 25px;
+    padding: 20px 20px;
+  }
+  .pageHeader .button {
+    padding: 4px 10px;
+  }
+  .pageHeader__title {
+    font-size: 14px;
+  }
+}
+.serviceGroup {
+  margin-bottom: 25px;
+}
+.serviceGroup__title {
+  margin-bottom: 8px;
+  font-size: 16px;
+  color: #bfc8d0;
+}
+.serviceList {
+  border: 2px solid #bfc8d0;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+.serviceList__item {
+  padding: 13px 15px;
+  border-bottom: 1px solid #d7e2eb;
+}
+.serviceList__item:after {
+  content: " ";
+  visibility: hidden;
+  display: block;
+  height: 0;
+  clear: both;
+}
+.serviceList__item:nth-child(even) {
+  background: #f6fbff;
+}
+.serviceList__item:last-child {
+  border-bottom: 0;
+  border-radius: 0 0 6px 6px;
+}
+.serviceList__description {
+  background: transparent
+    url(/assets/default/question-b9b6b60e94188feeb1428c3873ad8a8ee4b8978a758f4907aa2f320d9d96276d.svg)
+    0 0/100% auto no-repeat;
+  display: inline-block;
+  height: 14px;
+  margin-left: 5px;
+  vertical-align: -1px;
+  width: 14px;
+}
+.serviceList__name {
+  float: left;
+}
+.serviceList__status {
+  float: right;
+}
+@media (max-width: 650px) {
+  .serviceList__description {
+    display: none;
+  }
+}
+@media (max-width: 470px) {
+  .serviceList {
+    font-size: 14px;
+    border-width: 1px;
+  }
+}
+@media (max-width: 320px) {
+  .serviceList__item {
+    text-align: center;
+  }
+  .serviceList__name {
+    margin-bottom: 5px;
+  }
+  .serviceList__name,
+  .serviceList__status {
+    float: none;
+  }
+}
+.siteFooter {
+  border-top: 1px solid #efefef;
+  padding: 30px 0 80px 0;
+  overflow: hidden;
+  font-size: 13px;
+  margin-top: 50px;
+}
+.siteFooter__nav {
+  margin-bottom: 15px;
+  float: left;
+}
+.siteFooter__nav li {
+  display: inline;
+  margin-right: 25px;
+}
+.siteFooter__nav li a {
+  color: #999;
+}
+.siteFooter__nav li:last-child {
+  margin-right: 0;
+}
+.siteFooter__poweredBy {
+  float: right;
+  color: #999;
+}
+@media (max-width: 600px) {
+  .siteFooter {
+    text-align: center;
+  }
+}
+.siteHeader {
+  text-align: center;
+  background: #101111;
+  padding: 10px 0 30px 0;
+  position: relative;
+  margin-bottom: 50px;
+}
+.siteHeader__title {
+  font-size: 55px;
+  letter-spacing: -0.05em;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 15px;
+}
+@media (max-width: 750px) {
+  .siteHeader__title {
+    font-size: 6vw;
+  }
+}
+@media (max-width: 600px) {
+  .siteHeader {
+    padding: 85px 0 30px 0;
+    margin-bottom: 25px;
+  }
+}
+body {
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+@media (max-width: 750px) {
+  .container {
+    padding: 0 25px;
+  }
+}
+.ok{
+  color:#2FCC66
+}
+.outage{
+  color:#FF0000
+}
+</style>
+
+  <script>
+  window.console = window.console || function(t) {};
+</script>
+
+  
+  
+  <script>
+  if (document.location.search.match(/type=embed/gi)) {
+    window.parent.postMessage("resize", "*");
+  }
+  function httpGet()
+  {
+      var xmlHttp = new XMLHttpRequest();
+      xmlHttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.statusCode == 200) {
+      
+        document.getElementById("redis").innerHTML = '<span class="ok" >Operational</span>';
+      }
+    else{
+      document.getElementById("reids").innerHTML = '<span class="outage" >Outage</span>';
+    }
+    };
+      xmlHttp.open( "POST", "/api/v2/service/check", false );
+      xmlHttp.setRequestHeader("Content-Type", "application/json");
+      var data = JSON.stringify({"service": "redis", "server": "redis"});
+      xmlHttp.send(data);
+      setTimeout(httpGet, 5000);
+  }
+  httpGet();
+</script>
+
+
+</head>
+
+<body translate="no" >
+  <header class='siteHeader'>
+
+  <div class='container'>
+    <img src='static/images/spain.png' height='200' width='600'/>
+    <p class='siteHeader__title'>Server status page</p>
+
+  </div>
+</header>
+<div class='container'>
+  <section class='ongoingIssues'>
+    <a href='/issue/ccc9a970-98dc-4f10-afa5-d822d511172d' class='issueBanner issueBanner--monitoring'>
+      <p class='issueBanner__state'>Monitoring</p>
+      <h2>Network Connectivity Issues</h2>
+      <p class='issueBanner__time'>last updated <time id="time"></time></p>
+    </a>
+  </section>
+
+  <section class='serviceGroup'>
+    <ul class='serviceList serviceGroup__list'>
+      <li class='serviceList__item'>
+        <p class='serviceList__status'><span class="ok">Operational</span></p>
+        <p class='serviceList__name'>
+          Storage
+        </p>
+      </li>
+      <li class='serviceList__item'>
+        <p class='serviceList__status'><span class="ok">Operational</span></p>
+        <p class='serviceList__name'>
+          Databases
+        </p>
+      </li>
+      <li class='serviceList__item'>
+        <p class='serviceList__status'><span class="ok">Operational</span></p>
+        <p class='serviceList__name'>
+          Jenkins
+        </p>
+      </li>
+      <li class='serviceList__item'>
+        <p class='serviceList__status'><span class="ok">Operational</span></p>
+        <p class='serviceList__name'>
+          Backup Servers
+        </p>
+      </li>
+      <li class='serviceList__item'>
+        <p class='serviceList__status' id="redis"><span class="outage" >Outage</span></p>
+        <p class='serviceList__name'>
+          Redis Servers
+        </p>
+      </li>
+    </ul>
+  </section>
+</div>
+
+<footer class='siteFooter'>
+  <div class='container'>
+  </div>
+</footer>
+    <script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-1b93190375e9ccc259df3a57c1abc0e64599724ae30d7ea4c6877eb615f89387.js"></script>
+
+  
+      <script id="rendered-js" >
+function updateClock() {
+  var now = new Date(), // current date
+  months = ['January', 'February', 'March', 'April', 'May ', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  time = now.getHours() + ':' + now.getMinutes(), // again, you get the idea
+
+  // a cleaner way than string concatenation
+  date = [months[now.getMonth()],
+  now.getDate(),
+  now.getFullYear()].join(' ');
+
+  // set the content of the element with the ID time to the formatted string
+  document.getElementById('time').innerHTML = [date, time].join(' ');
+
+  // call this function again in 1000ms
+  setTimeout(updateClock, 1000);
+}
+updateClock(); // initial call
+//# sourceURL=pen.js
+    </script>
+
+  
+
+</body>
+
+</html>
+ 

@@ -1,0 +1,21 @@
+<web-app>
+<error-page>
+    <error-code>500</error-code>
+    <location>/Error.jsp</location>
+</error-page>
+
+<error-page>
+    <exception-type>java.lang.Exception</exception-type>
+    <location>/Error.jsp</location>
+</error-page>
+  <servlet>
+    <servlet-name>SignIn</servlet-name>
+    <servlet-class>SignIn</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>SignIn</servlet-name>
+    <url-pattern>/doSignIn</url-pattern>
+  </servlet-mapping>
+
+</web-app>   

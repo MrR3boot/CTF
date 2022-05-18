@@ -1,0 +1,130 @@
+
+
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+
+  <meta charset="UTF-8">
+ 
+  <title>Cell Controller</title>
+  
+  
+  
+  
+<style>
+*{
+    box-sizing: border-box;
+}
+body{
+    height: 100vh;
+    background: url(https://www.pixel4k.com/wp-content/uploads/2020/01/money-heist-cartoon_1578252524.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.form{
+    opacity: 0.7;
+    width: 420px;
+    height: 520px;
+    padding-top: 60px;
+    background-color: rgb(230, 230, 230);
+    border: rgb(0, 0, 0) 3px solid;
+    border-radius: 0px 50px 0px 50px;
+    box-shadow: 15px 15px 20px 5px rgba(119, 119, 119, 0.3),
+                -15px -15px 20px 5px rgba(255, 255, 255, 0.8),
+                inset 5px 5px 20px 5px rgba(119, 119, 119, 0.3),
+                inset -15px -15px 20px 5px rgba(255, 255, 255, 0.8);
+}
+.top-text, .username, .password, .submit{
+    display: block;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    outline: none;
+}
+.top-text{
+    font-size: 80px;
+}
+.username, .password{
+    font-size: 15px;
+    margin-top: 50px;
+    padding: 15px;
+    background-color: rgb(233, 231, 231);
+    width: 350px;
+    border-radius: 30px;
+    border: solid 3px rgb(0,0,0);
+    box-shadow: inset 10px 10px 20px 0px rgba(119, 119, 119, 0.3),
+                inset -10px -10px 20px 0px rgba(255, 255, 255, 0.8),
+                15px 15px 20px 5px rgba(119, 119, 119, 0.3),
+                -15px -15px 20px 5px rgba(255, 255, 255, 0.8);
+                text-align: left;
+}
+.submit{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 20px;
+    padding: 8px 15px;
+    margin-top: 50px;
+    background-color: rgb(233, 231, 231);
+    transition: 0.5s;
+    border: solid 3px rgb(0,0,0);
+    border-radius: 30px;
+    color: rgb(0, 0, 0);
+    text-shadow: 0 0 1px rgb(68, 68, 68);
+}
+.submit:hover{
+    border: solid 3px rgb(0,0,0);
+    box-shadow: 15px 15px 20px 5px rgba(119, 119, 119, 0.3),
+                -15px -15px 20px 5px rgba(255, 255, 255, 0.8);
+}
+</style>
+
+  <script>
+  window.console = window.console || function(t) {};
+</script>
+
+  
+  
+  <script>
+  if (document.location.search.match(/type=embed/gi)) {
+    window.parent.postMessage("resize", "*");
+  }
+</script>
+
+
+</head>
+
+<body translate="no" >
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title></title>
+</head>
+<body>
+    <div class="container">
+        <form action="/login" class="form" method="post">
+            <span class="top-text">Login</span>
+            <input type="text" name='username' placeholder="Username" class="username">
+            <input type="password" name='password' placeholder="Password" class="password">
+            <input type="submit" class="submit" value="Submit">
+        </form>
+        <br/>
+        {% if err%}<p style="color:white;">{{err}}</p>{% endif %}
+    </div>
+</body>
+</html>
+  
+  
+  
+  
+
+</body>
+
+</html>
+ 

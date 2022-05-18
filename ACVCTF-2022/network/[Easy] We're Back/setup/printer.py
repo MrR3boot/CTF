@@ -1,0 +1,401 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import socket
+import logging
+import re,binascii
+import hashlib
+from base64 import b64encode
+from collections import defaultdict
+from _thread import *
+
+class PJLServer:
+    def __init__(self):
+        self._server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    def listen(self, port=9100, backlog=100):
+        self._server.bind(("0.0.0.0", port))
+        self._server.listen(backlog)
+
+        logging.info("listening on port %d" % port)
+
+    def close(self):
+        self._server.close()
+
+    def accept(self):
+        client, addr = self._server.accept()
+        ip = addr[0]
+        logging.info("[%s] connected" % ip)
+        return PJLClient(client,ip)
+
+class PJLClient:
+    def __init__(self, client, address):
+        self._client = client
+        self._address = address
+
+    @property
+    def ip(self):
+        return self._address
+
+    def get_command(self, chunk_size=1024):
+        command = b""
+        packet_count = 0
+
+        while True:
+            packet = self._client.recv(chunk_size)
+
+            if not packet:
+                break
+
+            command += packet
+            packet_count += 1
+
+            if b"\r\n" in command:
+                break
+
+        logging.info("[%s] received %d bytes (%d packets)" % (self.ip, len(command), packet_count))
+        logging.debug("[%s] received command %s" % (self.ip, command))
+
+        return command
+
+    def reply(self, message):
+        logging.info("[%s] sending %s" % (self.ip, message))
+        self._client.send(message)
+
+    def close(self):
+        self._client.close()
+
+class Filesystem:
+    def __init__(self):
+        self._fs = defaultdict(defaultdict)
+
+    def split_path(self, path):
+        return [part for part in re.split(r"(\\|/)", path) if part.strip() not in ["", "/", "\\"]]
+
+    def add_file(self, name, content):
+        parts = self.split_path(name)
+        cwd = self._fs
+
+        for part in parts[:-1]:
+            cwd[part] = defaultdict(defaultdict)
+            cwd = cwd[part]
+
+        cwd[parts[-1]] = content
+
+    def listdir(self, name=""):
+        parts = self.split_path(name)
+        cwd = self._fs
+
+        for part in parts:
+            if part not in cwd:
+                return "FILEERROR=1"
+
+            cwd = cwd[part]
+
+        if isinstance(cwd, str):
+            return "%s TYPE=FILE SIZE=%d" % (parts[-1], len(cwd))
+
+        directory = [
+            ". TYPE=DIR",
+        ]
+
+        if cwd != self._fs:
+            directory.append(".. TYPE=DIR")
+
+        for element in cwd:
+            if isinstance(cwd[element], str):
+                directory.append("%s TYPE=FILE SIZE=%d" % (element, len(cwd[element])))
+            else:
+                directory.append("%s TYPE=DIR" % element)
+
+        return "\n".join(directory)
+
+fs = Filesystem()
+fs.add_file("0:\\pjl\\jobs\\queued", "")
+commands = {
+    "@PJL": {
+        "COMMENT": "",
+        "ENTER": {
+            "LANGUAGE": {
+                "PCL": "E . . . . PCL Job . . . . E",
+                "POSTSCRIPT": "%!PS-ADOBE ... PostScript print job ...",
+            }
+        },
+        "JOB": "",
+        "EOJ": "",
+        "DEFAULT": "",
+        "SET": "",
+        "INITIALIZE": "",
+        "RESET": "",
+        "INQUIRE": {
+            "RET": "MEDIUM",
+            "PAGEPROTECT": "OFF",
+            "RESOLUTION": "600",
+            "PERSONALITY": "AUTO",
+            "TIMEOUT": "15",
+            "LPARM:PCL": {
+                "PITCH": "10.00",
+                "PTSIZE": "12.00",
+                "SYMSET": "ROMAN8",
+            },
+        },
+        "DINQUIRE": {
+            "RET": "MEDIUM",
+            "PAGEPROTECT": "OFF",
+            "RESOLUTION": "600",
+            "PERSONALITY": "AUTO",
+            "TIMEOUT": "15",
+            "LPARM:PCL": {
+                "PITCH": "10.00",
+                "PTSIZE": "12.00",
+                "SYMSET": "ROMAN8",
+            },
+        },
+        "ECHO": lambda command: command,
+        "INFO": {
+            "ID": "HeistCorp LaserJet 4ML",
+            "CONFIG": "IN TRAYS [3 ENUMERATED]\n\tINTRAY1 MP\n\tINTRAY2 PC\n\tINTRAY3 LC\nENVELOPE TRAY\nOUT TRAYS [1 ENUMERATED]\n\tNORMAL FACEDOWN\nPAPERS [9 ENUMERATED]\n\tLETTER\n\tLEGAL\n\tA4\n\tEXECUTIVE\n\tMONARCH\n\tCOM10\n\tDL\n\tC5\n\tB5\nLANGUAGES [2 ENUMERATED]\n\tPCL\n\tPOSTSCRIPT\nUSTATUS [4 ENUMERATED]\n\tDEVICE\n\tJOB\n\tPAGE\n\tTIMED\nFONT CARTRIDGE SLOTS [1 ENUMERATED]\n\tCARTRIDGE\nMEMORY=2097152\nDISPLAY LINES=1\nDISPLAY CHARACTER SIZE=16",
+            "FILESYS": "VOLUME TOTAL SIZE FREE SPACE LOCATION LABEL STATUS\n0:     1755136    1718272    <HT>     <HT>  READ-WRITE",
+            "MEMORY": "TOTAL=1494416\nLARGEST=1494176",
+            "PAGECOUNT": "PAGECOUNT=183933",
+            "STATUS": "CODE=10001\nDISPLAY=\"HeistCorp supply in use\"\nONLINE=TRUE",
+            "VARIABLES": "COPIES=1 [2 RANGE]\n\t1\n\t999\nPAPER=LETTER [3 ENUMERATED]\n\tLETTER\n\tLEGAL\n\tA4\nORIENTATION=PORTRAIT [2 ENUMERATED]\n\tPORTRAIT\n\tLANDSCAPE\nFORMLINES=60 [2 RANGE]\n\t5\n\t128\nMANUALFEED=OFF [2 ENUMERATED]\n\tOFF\n\tON\nRET=MEDIUM [4 ENUMERATED]\n\tOFF\n\tLIGHT\n\tMEDIUM\n\tDARK\nPAGEPROTECT=OFF [4 ENUMERATED]\n\tOFF\n\tLETTER\n\tLEGAL\n\tA4\nRESOLUTION=600 [2 ENUMERATED]\n\t300\n\t600\nPERSONALITY=AUTO [3 ENUMERATED]\n\tAUTO\n\tPCL\n\tPOSTSCRIPT\nTIMEOUT=15 [2 RANGE]\n\t5\n\t300\nMPTRAY=CASSETTE [3 ENUMERATED]\n\tMANUAL\n\tCASSETTE\n\tFIRST\nINTRAY1=UNLOCKED [2 ENUMERATED]\n\tUNLOCKED\n\tLOCKED\nINTRAY2=UNLOCKED [2 ENUMERATED]\n\tUNLOCKED\n\tLOCKED\nINTRAY3=UNLOCKED [2 ENUMERATED]\n\tUNLOCKED\n\tLOCKED\nCLEARABLEWARNINGS=ON [2 ENUMERATED READONLY]\n\tJOB\n\tON\nAUTOCONT=OFF [2 ENUMERATED READONLY]\n\tOFF\n\tON\n\nDENSITY=3 [2 RANGE READONLY]\n\t1\n\t5\nLOWTONER=ON [2 ENUMERATED READONLY]\n\tOFF\n\tON\nINTRAY1SIZE=LETTER [9 ENUMERATED READONLY]\n\tLETTER\n\tLEGAL\n\tA4\n\tEXECUTIVE\n\tCOM10\n\tMONARCH\n\tC5\n\tDL\n\tB5\nINTRAY2SIZE=LETTER [4 ENUMERATED READONLY]\n\tLETTER\n\tLEGAL\n\tA4\n\tEXECUTIVE\nINTRAY3SIZE=LETTER [4 ENUMERATED READONLY]\n\tLETTER\n\tLEGAL\n\tA4\n\tEXECUTIVE\nINTRAY4SIZE=COM10 [5 ENUMERATED READONLY]\n\tCOM10\n\tMONARCH\n\tC5\n\tDL\n\tB5\nLPARM:PCL FONTSOURCE=I [1 ENUMERATED]\n\tI\nLPARM:PCL FONTNUMBER=0 [2 RANGE]\n\t0\n\t50\nLPARM:PCL PITCH=10.00 [2 RANGE]\n\t0.44\n\t99.99\nLPARM:PCL PTSIZE=12.00 [2 RANGE]\n\t4.00\n\t999.75\nLPARM:PCL SYMSET=ROMAN8 [4 ENUMERATED]\n\tROMAN8\n\tISOL1\n\tISOL2\n\tWIN30\nLPARM:POSTSCRIPT PRTPSERRS=OFF [2 ENUMERATED]\n\tOFF\n\tON\nLPARM:ENCRYPTION MODE=AES [CBC]",
+            "USTATUS": "DEVICE=OFF [3 ENUMERATED]\n\tOFF\n\tON\n\tVERBOSE\nJOB=OFF [2 ENUMERATED]\n\tOFF\n\tON\nPAGE=OFF [2 ENUMERATED]\n\tOFF\n\tON\nTIMED=0 [2 RANGE]\n\t5\n\t300",
+        },
+        "USTATUSOFF": "",
+        "USTATUS": {
+            "DEVICE": "CODE=10001\nDISPLAY=\"HeistCorp supply in use\"\nONLINE=TRUE",
+            "JOB": "",
+            "PAGE": "",
+            "TIMED": "CODE=10001\nDISPLAY=\"HeistCorp supply in use\"\nONLINE=TRUE",
+        },
+        "RDYMSG": "",
+        "OPMSG": "",
+        "STMSG": "",
+        "FSAPPEND": "",
+        "FSDELETE": "",
+        "FSDIRLIST": lambda command: fs.listdir(re.findall(r"\"([^\"]+)\"", command)[0]),
+        "FSDOWNLOAD": "",
+        "FSINIT": "",
+        "FSMKDIR": "",
+        "FSQUERY": lambda command: fs.listdir(re.findall(r"\"([^\"]+)\"", command)[0]),
+        "FSUPLOAD": "",
+        #65 67 86 67 84 70 123 109 51 109 95 108 51 52 107 115 95 60 51 125
+        "RNVRAM ADDRESS=1": "\nDATA = 46",
+        "RNVRAM ADDRESS=7000": "\nDATA = 107",
+        "RNVRAM ADDRESS=7001": "\nDATA = 46",
+        "RNVRAM ADDRESS=7002": "\nDATA = 101",
+        "RNVRAM ADDRESS=7003": "\nDATA = 46",
+        "RNVRAM ADDRESS=7004": "\nDATA = 121",
+        "RNVRAM ADDRESS=7005": "\nDATA = 46",
+        "RNVRAM ADDRESS=7006": "\nDATA = 46",
+        "RNVRAM ADDRESS=7007": "\nDATA = 46",
+        "RNVRAM ADDRESS=7008": "\nDATA = 46",
+        "RNVRAM ADDRESS=7009": "\nDATA = 46",
+        "RNVRAM ADDRESS=7010": "\nDATA = 46",
+        "RNVRAM ADDRESS=7011": "\nDATA = 46",
+        "RNVRAM ADDRESS=7012": "\nDATA = 46",
+        "RNVRAM ADDRESS=7013": "\nDATA = 46",
+        "RNVRAM ADDRESS=7014": "\nDATA = 46",
+        "RNVRAM ADDRESS=7015": "\nDATA = 46",
+        "RNVRAM ADDRESS=7016": "\nDATA = 46",
+        "RNVRAM ADDRESS=7017": "\nDATA = 46",
+        "RNVRAM ADDRESS=32769": "\nDATA = 65",
+        "RNVRAM ADDRESS=32770": "\nDATA = 46",
+        "RNVRAM ADDRESS=32771": "\nDATA = 67",
+        "RNVRAM ADDRESS=32772": "\nDATA = 46",
+        "RNVRAM ADDRESS=32773": "\nDATA = 86",
+        "RNVRAM ADDRESS=32774": "\nDATA = 46",
+        "RNVRAM ADDRESS=32775": "\nDATA = 67",
+        "RNVRAM ADDRESS=32776": "\nDATA = 46",
+        "RNVRAM ADDRESS=32777": "\nDATA = 84",
+        "RNVRAM ADDRESS=32778": "\nDATA = 46",
+        "RNVRAM ADDRESS=32779": "\nDATA = 70",
+        "RNVRAM ADDRESS=32780": "\nDATA = 46",
+        "RNVRAM ADDRESS=32781": "\nDATA = 123",
+        "RNVRAM ADDRESS=32782": "\nDATA = 46",
+        "RNVRAM ADDRESS=32783": "\nDATA = 109",
+        "RNVRAM ADDRESS=32784": "\nDATA = 46",
+        "RNVRAM ADDRESS=32785": "\nDATA = 51",
+        "RNVRAM ADDRESS=32786": "\nDATA = 46",
+        "RNVRAM ADDRESS=32787": "\nDATA = 109",
+        "RNVRAM ADDRESS=32788": "\nDATA = 46",
+        "RNVRAM ADDRESS=32789": "\nDATA = 95",
+        "RNVRAM ADDRESS=32790": "\nDATA = 46",
+        "RNVRAM ADDRESS=32791": "\nDATA = 108",
+        "RNVRAM ADDRESS=53248": "\nDATA = 46",
+        "RNVRAM ADDRESS=53249": "\nDATA = 51",
+        "RNVRAM ADDRESS=53250": "\nDATA = 46",
+        "RNVRAM ADDRESS=53251": "\nDATA = 52",
+        "RNVRAM ADDRESS=53252": "\nDATA = 46",
+        "RNVRAM ADDRESS=53253": "\nDATA = 107",
+        "RNVRAM ADDRESS=53254": "\nDATA = 46",
+        "RNVRAM ADDRESS=53255": "\nDATA = 115",
+        "RNVRAM ADDRESS=53256": "\nDATA = 46",
+        "RNVRAM ADDRESS=53257": "\nDATA = 95",
+        "RNVRAM ADDRESS=53258": "\nDATA = 46",
+        "RNVRAM ADDRESS=53259": "\nDATA = 60",
+        "RNVRAM ADDRESS=53260": "\nDATA = 46",
+        "RNVRAM ADDRESS=53261": "\nDATA = 51",
+        "RNVRAM ADDRESS=53262": "\nDATA = 46",
+        "RNVRAM ADDRESS=53263": "\nDATA = 125"    
+    },
+}
+
+def log_command(command):
+    logging.info("couldn't parse command '%s'" % command)
+
+    return "?"
+
+def find_action(command):
+    search_area = commands
+    parsed_command = command.strip()
+
+    if not parsed_command:
+        return None
+
+    while len(parsed_command) > 0:
+        could_parse = False
+
+        if not isinstance(search_area, dict):
+            break
+
+        for (subcommand, area) in search_area.items():
+            if subcommand == "":
+                continue
+
+            if parsed_command.lower().startswith(subcommand.lower()):
+                parsed_command = parsed_command[len(subcommand):].strip()
+                search_area = area
+                could_parse = True
+                break
+
+        if not could_parse:
+            logging.debug("unknown argument '%s'" % parsed_command)
+            return None
+
+    while isinstance(search_area, dict):
+        if "" not in search_area.keys():
+            return None
+
+        search_area = search_area[""]
+
+    return search_area
+
+
+def run_command(command):
+    command = command.strip()
+    logging.debug("parsing '%s'" % command)
+    action = find_action(command)
+
+    if action == None:
+        return log_command(command)
+
+    if isinstance(action, str):
+        logging.debug("found '%s' for '%s'" % (action, command))
+        return action
+
+    logging.debug("executing found action for '%s'" % command)
+    try:
+        result = action(command)
+    except Exception as error:
+        logging.warning("error in action: %s" % str(error))
+        return log_command(command)
+
+    logging.debug("execution result '%s' for '%s'" % (result, command))
+
+    return result
+
+def check(conn):
+    while True:
+        try:
+            is_pcl_session = False
+            program = conn.get_command()
+
+            if program.startswith(b"\x1bE\x1b&l"):
+                is_pcl_session = True
+
+            if is_pcl_session:
+                if not program:
+                    break
+
+                pcl_file_bytes += program
+                continue
+
+            if len(program) > 0 and program[0] == ord(b"\x1b"):
+                program_start = program.index(b"@")
+                program_delimiter = program[:program_start]
+                program = program[len(program_delimiter):-len(program_delimiter)]
+
+            try:
+                program = program.decode("utf-8").strip()
+            except:
+                program = ''
+        except KeyboardInterrupt:
+            break
+
+        if not program:
+            break
+
+        replies = []
+
+        for command in program.split("\r\n"):
+            command_result = run_command(command)
+            result = (command_result + "\n").replace("\n", "\r\n")
+            replies.append(result)
+
+        try:
+            reply = bytes("\r\n".join(replies), "utf-8")
+            conn.reply(reply)
+        except:
+            conn.reply('Invalid Command')
+
+if __name__ == "__main__":
+    if not (3 <= len(sys.argv) <= 4):
+        print("usage: %s PORT PCL_DIRECTORY [LOGFILE]" % sys.argv[0])
+        exit(1)
+
+    port = int(sys.argv[1])
+    pcl_directory = sys.argv[2]
+    log_handlers = [logging.StreamHandler()]
+
+    if len(sys.argv) == 4:
+        logfile = sys.argv[3]
+        log_handlers.append(logging.FileHandler(logfile))
+
+    logging.basicConfig(
+        level = logging.DEBUG,
+        format="%(asctime)s [%(levelname)s]\t%(message)s",
+        handlers=log_handlers
+    )
+
+    if not os.path.exists(pcl_directory):
+        logging.warning("pcl directory '%s' not found" % pcl_directory)
+        exit(2)
+
+    server = PJLServer()
+    server.listen(port)
+    while True:
+        try:
+            client = server.accept()
+        except KeyboardInterrupt:
+            break
+        is_pcl_session = False
+        pcl_file_bytes = b""
+        start_new_thread(check, (client,))
+        if is_pcl_session:
+            md5 = hashlib.md5()
+            md5.update(pcl_file_bytes)
+            file_hash = md5.hexdigest()
+            filename = os.path.join(pcl_directory, file_hash)
+            logging.info("[%s] received document %s" % (client.ip, filename))
+
+            with open(filename, "wb") as file_handle:
+                file_handle.write(pcl_file_bytes)
+
+            is_pcl_session = False
+            pcl_file_bytes = b""
+
+        #client.close()
+    server.close()
